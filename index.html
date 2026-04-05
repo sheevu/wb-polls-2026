@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>West Bengal Poll Predictions 2026 | Sudarshan AI Labs</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        bjp: '#ff6b00',
+        tmc: '#00a86b',
+        inc: '#1565c0',
+        left: '#c62828',
+        gold: '#fbbf24',
+        dark: '#020817',
+        card: '#0f172a'
+      },
+      fontFamily: { poppins: ['Poppins','sans-serif'] }
+    }
+  }
+}
+</script>
+<style>
+* { font-family: 'Poppins', sans-serif; }
+body { background: #020817; color: #f8fafc; scroll-behavior: smooth; }
+.glow-bjp { box-shadow: 0 0 30px rgba(255,107,0,0.3); }
+.glow-tmc { box-shadow: 0 0 30px rgba(0,168,107,0.3); }
+.glow-gold { box-shadow: 0 0 40px rgba(251,191,36,0.4); }
+.gradient-bjp { background: linear-gradient(135deg,#ff6b00,#ff9d00); }
+.gradient-tmc { background: linear-gradient(135deg,#00a86b,#00d084); }
+.gradient-dark { background: linear-gradient(135deg,#0f172a,#1e293b); }
+.particle { position:absolute; border-radius:50%; pointer-events:none; animation: float linear infinite; }
+@keyframes float { 0%{transform:translateY(100vh) scale(0);opacity:0} 10%{opacity:1} 90%{opacity:1} 100%{transform:translateY(-20px) scale(1);opacity:0} }
+@keyframes fadeInUp { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pulse-glow { 0%,100%{box-shadow:0 0 20px rgba(251,191,36,0.3)} 50%{box-shadow:0 0 60px rgba(251,191,36,0.7)} }
+@keyframes spin-slow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+@keyframes bar-fill { from{width:0%} to{width:var(--w)} }
+@keyframes count-up { from{opacity:0;transform:scale(0.5)} to{opacity:1;transform:scale(1)} }
+@keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+.animate-fade-in { animation: fadeInUp 0.8s ease forwards; }
+.animate-pulse-glow { animation: pulse-glow 2s ease infinite; }
+.card-hover { transition: all 0.3s cubic-bezier(0.4,0,0.2,1); }
+.card-hover:hover { transform: translateY(-8px) scale(1.02); }
+.bar { animation: bar-fill 1.5s cubic-bezier(0.4,0,0.2,1) forwards; }
+.shimmer { background: linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent); background-size:200% 100%; animation: shimmer 2s infinite; }
+.nav-link { transition: all 0.2s; border-bottom: 2px solid transparent; }
+.nav-link:hover,.nav-link.active { border-bottom-color: #fbbf24; color: #fbbf24; }
+.section-title { background: linear-gradient(135deg,#fbbf24,#ff6b00); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+#compass-canvas { cursor: grab; }
+#compass-canvas:active { cursor: grabbing; }
+.tooltip { position:absolute; background:rgba(15,23,42,0.95); border:1px solid rgba(251,191,36,0.3); border-radius:12px; padding:12px 16px; font-size:12px; pointer-events:none; z-index:100; backdrop-filter:blur(10px); transition:all 0.2s; }
+.progress-ring { transition: stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1); }
+.ticker { animation: ticker 20s linear infinite; }
+@keyframes ticker { 0%{transform:translateX(100%)} 100%{transform:translateX(-100%)} }
+.glassmorphism { background:rgba(15,23,42,0.6); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.08); }
+.number-animate { animation: count-up 0.6s cubic-bezier(0.4,0,0.2,1) forwards; }
+</style>
+</head>
+<body class="bg-dark">
+
+<!-- PARTICLES BG -->
+<div id="particles" class="fixed inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+<!-- STICKY NAV -->
+<nav class="sticky top-0 z-50 glassmorphism border-b border-white/10">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl gradient-bjp flex items-center justify-center text-white font-bold text-sm animate-pulse-glow">SA</div>
+      <div>
+        <div class="text-sm font-bold text-white">Sudarshan AI Labs</div>
+        <div class="text-[10px] text-yellow-400">vyapai.in</div>
+      </div>
+    </div>
+    <div class="hidden md:flex gap-6 text-sm">
+      <a href="#hero" class="nav-link text-slate-300 pb-1">Overview</a>
+      <a href="#infographic" class="nav-link text-slate-300 pb-1">Infographic</a>
+      <a href="#polls" class="nav-link text-slate-300 pb-1">Poll of Polls</a>
+      <a href="#compass" class="nav-link text-slate-300 pb-1">3D Compass</a>
+      <a href="#parties" class="nav-link text-slate-300 pb-1">Parties</a>
+      <a href="#dashboard" class="nav-link text-slate-300 pb-1">Dashboard</a>
+    </div>
+    <a href="https://vyapai.in" target="_blank" class="gradient-bjp text-white text-xs font-semibold px-4 py-2 rounded-full hover:opacity-90 transition">Visit vyapai.in</a>
+  </div>
+</nav>
+
+<!-- TICKER -->
+<div class="bg-yellow-400/10 border-y border-yellow-400/20 py-2 overflow-hidden">
+  <div class="ticker whitespace-nowrap text-yellow-400 text-xs font-medium">
+         🏵️ BJP PROJECTED: 165 SEATS — CLEAR MAJORITY    |    🌿 AITC: 115 SEATS (-100 vs 2021)    |    ✋ INC: 8 SEATS    |    🔨 CPI(M): 3 SEATS    |    🏺 ISF: 5 SEATS    |    📊 MAJORITY THRESHOLD: 147 SEATS    |    🤖 AI PROJECTION BY SUDARSHAN AI LABS    |    🌐 VYAPAI.IN   
+  </div>
+</div>
+
+<!-- SECTION 1: HERO -->
+<section id="hero" class="relative min-h-screen flex items-center py-20 px-4">
+  <div class="max-w-7xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center">
+    <div class="space-y-6 animate-fade-in">
+      <div class="inline-flex items-center gap-2 bg-yellow-400/10 border border-yellow-400/30 rounded-full px-4 py-1.5 text-yellow-400 text-xs font-semibold">
+        <span class="w-2 h-2 bg-yellow-400 rounded-full animate-ping"></span>
+        LIVE AI PROJECTION · APRIL 2026
+      </div>
+      <h1 class="text-4xl md:text-6xl font-black leading-tight">
+        West Bengal<br/>
+        <span class="section-title">Poll Predictions</span><br/>
+        <span class="text-white">2026</span>
+      </h1>
+      <p class="text-slate-400 text-base leading-relaxed max-w-md">
+        AI-Based Projection powered by <strong class="text-yellow-400">Sudarshan AI Labs</strong>. 
+        Comprehensive district-wise analysis across all 294 assembly constituencies.
+      </p>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="glassmorphism rounded-2xl p-4 text-center glow-bjp card-hover">
+          <div class="text-3xl font-black text-orange-400">165</div>
+          <div class="text-xs text-slate-400 mt-1">🏵️ BJP Seats</div>
+        </div>
+        <div class="glassmorphism rounded-2xl p-4 text-center glow-tmc card-hover">
+          <div class="text-3xl font-black text-emerald-400">115</div>
+          <div class="text-xs text-slate-400 mt-1">🌿 AITC Seats</div>
+        </div>
+        <div class="glassmorphism rounded-2xl p-4 text-center card-hover">
+          <div class="text-3xl font-black text-yellow-400">147</div>
+          <div class="text-xs text-slate-400 mt-1">🏆 Majority</div>
+        </div>
+      </div>
+      <div class="space-y-2">
+        <div class="flex items-center gap-3 text-sm">
+          <span class="w-5 h-5 rounded-full gradient-bjp flex-shrink-0"></span>
+          <span class="text-slate-300">BJP projected to cross majority with <strong class="text-orange-400">165 seats</strong></span>
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+          <span class="w-5 h-5 rounded-full gradient-tmc flex-shrink-0"></span>
+          <span class="text-slate-300">TMC sees significant decline <strong class="text-red-400">(-100 seats)</strong> vs 2021</span>
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+          <span class="w-5 h-5 rounded-full bg-yellow-400 flex-shrink-0"></span>
+          <span class="text-slate-300">Vote share consolidation strongly <strong class="text-yellow-400">favors BJP</strong></span>
+        </div>
+      </div>
+    </div>
+    <div class="relative">
+      <div class="absolute -inset-8 bg-gradient-to-br from-orange-500/20 via-transparent to-emerald-500/20 rounded-3xl blur-3xl"></div>
+      <div class="relative glassmorphism rounded-3xl overflow-hidden glow-gold">
+        <img src="https://user-gen-media-assets.s3.amazonaws.com/gemini_images/a5dd5691-fd31-4a30-965f-cc2016649d2d.png"
+             alt="West Bengal Poll Predictions 2026"
+             class="w-full h-auto" loading="lazy" />
+        <div class="absolute top-3 right-3 bg-yellow-400 text-black text-[10px] font-bold px-2 py-1 rounded-full">
+          AI PROJECTED
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: INFOGRAPHIC - BAR CHART -->
+<section id="infographic" class="py-20 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12">
+      <span class="text-xs font-semibold uppercase tracking-widest text-yellow-400">Section 01</span>
+      <h2 class="text-3xl md:text-4xl font-black mt-2"><span class="section-title">Seat Projection</span> Chart</h2>
+      <p class="text-slate-400 mt-2">Animated bar chart with majority threshold marker</p>
+    </div>
+    <div class="glassmorphism rounded-3xl p-8">
+      <!-- Majority threshold -->
+      <div class="relative mb-6">
+        <div class="flex justify-between text-xs text-slate-400 mb-1">
+          <span>0</span><span class="text-yellow-400 font-semibold">⇧ Majority: 147</span><span>294</span>
+        </div>
+      </div>
+      <!-- Bars -->
+      <div class="space-y-5" id="bar-chart">
+        <div>
+          <div class="flex justify-between text-sm mb-2">
+            <span class="font-semibold flex items-center gap-2">🏵️ <span class="text-orange-400">BJP</span></span>
+            <span class="font-black text-orange-400">165 seats • 56.1%</span>
+          </div>
+          <div class="relative h-12 bg-slate-800/60 rounded-xl overflow-hidden">
+            <div class="h-full gradient-bjp rounded-xl bar shimmer" style="--w:56.1%" id="bjp-bar"></div>
+            <div class="absolute inset-0 flex items-center justify-end pr-4 text-white font-bold text-sm">+88 vs 2021</div>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between text-sm mb-2">
+            <span class="font-semibold flex items-center gap-2">🌿 <span class="text-emerald-400">AITC (TMC)</span></span>
+            <span class="font-black text-emerald-400">115 seats • 39.1%</span>
+          </div>
+          <div class="relative h-12 bg-slate-800/60 rounded-xl overflow-hidden">
+            <div class="h-full gradient-tmc rounded-xl bar shimmer" style="--w:39.1%" id="tmc-bar"></div>
+            <div class="absolute inset-0 flex items-center justify-end pr-4 text-white font-bold text-sm">-100 vs 2021</div>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between text-sm mb-2">
+            <span class="font-semibold flex items-center gap-2">✋ <span class="text-blue-400">INC</span></span>
+            <span class="font-black text-blue-400">8 seats • 2.7%</span>
+          </div>
+          <div class="relative h-8 bg-slate-800/60 rounded-xl overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-xl bar" style="--w:2.7%"></div>
+          </div>
+        </div>
+        <div>
+          <div class="flex justify-between text-sm mb-2">
+            <span class="font-semibold flex items-center gap-2">🏰 <span class="text-slate-400">Others (ISF+Left+Rest)</span></span>
+            <span class="font-black text-slate-400">6 seats • 2.1%</span>
+          </div>
+          <div class="relative h-8 bg-slate-800/60 rounded-xl overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-slate-600 to-slate-400 rounded-xl bar" style="--w:2.1%"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Majority line indicator -->
+      <div class="mt-6 relative h-1 bg-slate-700 rounded">
+        <div class="absolute top-0 bg-yellow-400 h-1 rounded" style="width:50.3%"></div>
+        <div class="absolute -top-5 text-yellow-400 text-[10px] font-bold" style="left:50%">↓ MAJORITY (147)</div>
+      </div>
+      <!-- Insight box -->
+      <div class="mt-10 p-5 bg-gradient-to-r from-orange-500/10 to-yellow-500/10 border border-orange-500/30 rounded-2xl">
+        <div class="text-xs font-semibold text-yellow-400 uppercase tracking-wider mb-2">⚡ Key Insights</div>
+        <div class="grid md:grid-cols-3 gap-4 text-sm">
+          <div class="flex items-start gap-2"><span class="text-green-400 mt-0.5">✔</span> BJP crosses majority threshold with 18 surplus seats</div>
+          <div class="flex items-start gap-2"><span class="text-red-400 mt-0.5">▼</span> TMC largest decline: -100 seats vs 2021 election</div>
+          <div class="flex items-start gap-2"><span class="text-yellow-400 mt-0.5">★</span> Vote share consolidation strongly favors BJP at 56.1%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: POLL OF POLLS -->
+<section id="polls" class="py-20 px-4 bg-gradient-dark">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12">
+      <span class="text-xs font-semibold uppercase tracking-widest text-yellow-400">Section 02</span>
+      <h2 class="text-3xl md:text-4xl font-black mt-2"><span class="section-title">Poll of Polls</span> — Seat Bands</h2>
+      <p class="text-slate-400 mt-2">Aggregated projections from multiple agencies with responsive card design</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <article class="glassmorphism rounded-3xl p-6 card-hover glow-gold">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-bold text-base">Matrize-IANS</h3>
+          <span class="text-[9px] bg-yellow-400/20 text-yellow-400 px-2 py-1 rounded-full">FIELDWORK · MAR'26</span>
+        </div>
+        <div class="space-y-3 text-sm">
+          <div>
+            <div class="flex justify-between mb-1.5"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-orange-400"></span>BJP/NDA</span><strong class="text-orange-400">147–167</strong></div>
+            <div class="h-2 bg-slate-800/60 rounded-full overflow-hidden"><div class="h-full gradient-bjp rounded-full" style="width:60%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1.5"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>AITC/MGB</span><strong class="text-emerald-400">70–90</strong></div>
+            <div class="h-2 bg-slate-800/60 rounded-full overflow-hidden"><div class="h-full gradient-tmc rounded-full" style="width:35%"></div></div>
+          </div>
+          <div class="text-xs text-slate-400 pt-2 border-t border-slate-700">Sample: 20,000 · Method: CATI</div>
+        </div>
+      </article>
+      <article class="glassmorphism rounded-3xl p-6 card-hover">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-bold text-base">Chanakya</h3>
+          <span class="text-[9px] bg-yellow-400/20 text-yellow-400 px-2 py-1 rounded-full">APR'26</span>
+        </div>
+        <div class="space-y-3 text-sm">
+          <div>
+            <div class="flex justify-between mb-1.5"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-orange-400"></span>BJP/NDA</span><strong class="text-orange-400">130–138</strong></div>
+            <div class="h-2 bg-slate-800/60 rounded-full overflow-hidden"><div class="h-full gradient-bjp rounded-full" style="width:55%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1.5"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>AITC/MGB</span><strong class="text-emerald-400">100–108</strong></div>
+            <div class="h-2 bg-slate-800/60 rounded-full overflow-hidden"><div class="h-full gradient-tmc rounded-full" style="width:42%"></div></div>
+          </div>
+          <div class="text-xs text-slate-400 pt-2 border-t border-slate-700">Sample: 15,000 · Method: Booth-level</div>
+        </div>
+      </article>
+      <article class="glassmorphism rounded-3xl p-6 card-hover glow-bjp">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-bold text-base text-orange-400">Sudarshan AI</h3>
+          <span class="text-[9px] bg-orange-400/20 text-orange-400 px-2 py-1 rounded-full">AI MODEL · APR'26</span>
+        </div>
+        <div class="space-y-3 text-sm">
+          <div>
+            <div class="flex justify-between mb-1.5"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-orange-400"></span>BJP/NDA</span><strong class="text-orange-400">165</strong></div>
+            <div class="h-2 bg-slate-800/60 rounded-full overflow-hidden"><div class="h-full gradient-bjp rounded-full shimmer" style="width:56.1%"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between mb-1.5"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>AITC/MGB</span><strong class="text-emerald-400">115</strong></div>
+            <div class="h-2 bg-slate-800/60 rounded-full overflow-hidden"><div class="h-full gradient-tmc rounded-full" style="width:39.1%"></div></div>
+          </div>
+          <div class="text-xs text-orange-400 pt-2 border-t border-slate-700 font-semibold">★ District-wise AI projection · 294 seats</div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4: 3D COMPASS -->
+<section id="compass" class="py-20 px-4">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-[1.5fr_1fr] gap-10 items-center">
+    <div>
+      <span class="text-xs font-semibold uppercase tracking-widest text-yellow-400">Section 03</span>
+      <h2 class="text-3xl md:text-4xl font-black mt-2 mb-4"><span class="section-title">Interactive 3D</span> Compass</h2>
+      <p class="text-slate-400 mb-4">Drag or rotate your device to explore BJP vs AITC balance across key regions of West Bengal.</p>
+      <div class="glassmorphism rounded-3xl p-8 relative" style="height:500px">
+        <canvas id="compass-canvas" class="w-full h-full"></canvas>
+        <div id="compass-tooltip" class="tooltip hidden"></div>
+      </div>
+    </div>
+    <div class="space-y-5">
+      <div class="glassmorphism rounded-2xl p-6">
+        <h3 class="font-semibold mb-2 flex items-center gap-2"><span class="text-yellow-400">⚡</span> North Bengal</h3>
+        <div class="text-sm space-y-1">
+          <p class="text-slate-300">BJP <strong class="text-orange-400">42</strong> • AITC <strong class="text-emerald-400">9</strong> • Others <strong>1</strong></p>
+          <p class="text-slate-400 text-xs">Strong MSME potential: logistics, tea estates, border trade</p>
+        </div>
+      </div>
+      <div class="glassmorphism rounded-2xl p-6">
+        <h3 class="font-semibold mb-2 flex items-center gap-2"><span class="text-yellow-400">⚡</span> Junglemahal</h3>
+        <div class="text-sm space-y-1">
+          <p class="text-slate-300">BJP <strong class="text-orange-400">28</strong> • AITC <strong class="text-emerald-400">15</strong></p>
+          <p class="text-slate-400 text-xs">Mining, forest products, rural manufacturing</p>
+        </div>
+      </div>
+      <div class="glassmorphism rounded-2xl p-6">
+        <h3 class="font-semibold mb-2 flex items-center gap-2"><span class="text-yellow-400">⚡</span> Kolkata Metro</h3>
+        <div class="text-sm space-y-1">
+          <p class="text-slate-300">BJP <strong class="text-orange-400">30</strong> • AITC <strong class="text-emerald-400">45</strong></p>
+          <p class="text-slate-400 text-xs">Tech hubs, services, urban MSMEs</p>
+        </div>
+      </div>
+      <div class="glassmorphism rounded-2xl p-6">
+        <h3 class="font-semibold mb-2 flex items-center gap-2"><span class="text-yellow-400">⚡</span> Gangetic Plains</h3>
+        <div class="text-sm space-y-1">
+          <p class="text-slate-300">BJP <strong class="text-orange-400">65</strong> • AITC <strong class="text-emerald-400">46</strong></p>
+          <p class="text-slate-400 text-xs">Agro-processing, textiles, food MSMEs</p>
+        </div>
+      </div>
+      <p class="text-xs text-slate-500 leading-relaxed">Data from Sudarshan AI Labs district-wise scenario. Drag compass to explore regional breakdowns interactively.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: PARTY STRIP -->
+<section id="parties" class="py-20 px-4 bg-gradient-dark">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12">
+      <span class="text-xs font-semibold uppercase tracking-widest text-yellow-400">Section 04</span>
+      <h2 class="text-3xl md:text-4xl font-black mt-2"><span class="section-title">Party-wise</span> Breakdown</h2>
+      <p class="text-slate-400 mt-2">Detailed seats, vote share, and swing vs 2021 with party symbols and colors</p>
+    </div>
+    <div class="grid md:grid-cols-4 gap-5" id="party-strip">
+      <!-- BJP -->
+      <article class="glassmorphism rounded-3xl p-5 text-center card-hover glow-bjp">
+        <div class="text-4xl mb-2">🏵️</div>
+        <h3 class="font-bold text-sm mb-1">BJP</h3>
+        <div class="text-4xl font-black text-orange-400 my-2 number-animate">165</div>
+        <p class="text-[11px] text-slate-400 mb-3">seats • 56.1% vote share</p>
+        <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-3"><div class="h-full gradient-bjp rounded-full" style="width:56.1%"></div></div>
+        <span class="inline-block text-xs font-semibold bg-green-400/20 text-green-400 px-2 py-1 rounded-full">+88 vs 2021</span>
+      </article>
+      <!-- AITC -->
+      <article class="glassmorphism rounded-3xl p-5 text-center card-hover glow-tmc">
+        <div class="text-4xl mb-2">🌿</div>
+        <h3 class="font-bold text-sm mb-1">AITC (TMC)</h3>
+        <div class="text-4xl font-black text-emerald-400 my-2 number-animate">115</div>
+        <p class="text-[11px] text-slate-400 mb-3">seats • 39.1% vote share</p>
+        <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-3"><div class="h-full gradient-tmc rounded-full" style="width:39.1%"></div></div>
+        <span class="inline-block text-xs font-semibold bg-red-400/20 text-red-400 px-2 py-1 rounded-full">-100 vs 2021</span>
+      </article>
+      <!-- INC -->
+      <article class="glassmorphism rounded-3xl p-5 text-center card-hover">
+        <div class="text-4xl mb-2">✋</div>
+        <h3 class="font-bold text-sm mb-1">INC</h3>
+        <div class="text-4xl font-black text-blue-400 my-2 number-animate">8</div>
+        <p class="text-[11px] text-slate-400 mb-3">seats • 2.7% vote share</p>
+        <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-3"><div class="h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full" style="width:2.7%"></div></div>
+        <span class="inline-block text-xs font-semibold bg-green-400/20 text-green-400 px-2 py-1 rounded-full">+6 vs 2021</span>
+      </article>
+      <!-- Others -->
+      <article class="glassmorphism rounded-3xl p-5 text-center card-hover">
+        <div class="text-4xl mb-2">🏗️</div>
+        <h3 class="font-bold text-sm mb-1">Others</h3>
+        <div class="text-4xl font-black text-slate-400 my-2 number-animate">6</div>
+        <p class="text-[11px] text-slate-400 mb-3">seats • 2.1% combined</p>
+        <div class="h-1.5 bg-slate-800 rounded-full overflow-hidden mb-3"><div class="h-full bg-slate-600 rounded-full" style="width:2.1%"></div></div>
+        <span class="inline-block text-xs font-semibold bg-slate-400/20 text-slate-400 px-2 py-1 rounded-full">ISF+Left+Rest</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 6: DASHBOARD -->
+<section id="dashboard" class="py-20 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12">
+      <span class="text-xs font-semibold uppercase tracking-widest text-yellow-400">Section 05</span>
+      <h2 class="text-3xl md:text-4xl font-black mt-2"><span class="section-title">AI Election</span> Dashboard</h2>
+      <p class="text-slate-400 mt-2">High-level KPIs with Chart.js visualizations for seats and MSME zones</p>
+    </div>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="glassmorphism rounded-3xl p-8">
+        <h3 class="font-semibold mb-5 flex items-center gap-2 text-yellow-400">🍰 Seat Share (%)</h3>
+        <canvas id="seatShareChart" class="mx-auto" style="max-height:300px"></canvas>
+      </div>
+      <div class="glassmorphism rounded-3xl p-8 flex flex-col justify-between">
+        <div>
+          <h3 class="font-semibold mb-4 flex items-center gap-2 text-yellow-400">⚡ Key Insights</h3>
+          <ul class="space-y-3 text-sm">
+            <li class="flex items-start gap-2"><span class="text-orange-400">🏵️</span> BJP projected at <strong class="text-orange-400">165 seats</strong> — clear majority, 18 seats above threshold.</li>
+            <li class="flex items-start gap-2"><span class="text-emerald-400">🌿</span> AITC falls to <strong class="text-emerald-400">115 seats</strong>, a massive loss of <strong class="text-red-400">-100 seats</strong> vs 2021.</li>
+            <li class="flex items-start gap-2"><span class="text-yellow-400">🏭</span> Strong <strong>MSME upside</strong> in North Bengal (logistics, tea), Junglemahal (minerals, manufacturing), and Gangetic plains (agro, textiles).</li>
+            <li class="flex items-start gap-2"><span class="text-blue-400">📈</span> Vote share consolidation: BJP 56.1%, AITC 39.1%, Others combined 4.8%.</li>
+          </ul>
+        </div>
+        <p class="text-xs text-slate-500 mt-6 border-t border-slate-700 pt-4">Scenario based on Sudarshan AI Polls 2026 district-wise model: BJP 165, AITC 115, INC 8, Left/ISF 5, Others 1. Total 294 seats.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="py-10 px-4 border-t border-white/10">
+  <div class="max-w-7xl mx-auto text-center space-y-3">
+    <div class="flex items-center justify-center gap-2">
+      <div class="w-8 h-8 rounded-lg gradient-bjp flex items-center justify-center text-white font-bold text-xs">SA</div>
+      <span class="font-bold">Sudarshan AI Labs</span>
+    </div>
+    <p class="text-sm text-slate-400">AI-driven political intelligence for West Bengal 2026</p>
+    <p class="text-xs text-slate-500">Sudarshan AI Polls 2026 · <a href="https://vyapai.in" target="_blank" class="text-yellow-400 hover:underline">vyapai.in</a> · Powered by district-wise modeling</p>
+  </div>
+</footer>
+
+<!-- JAVASCRIPT -->
+<script>
+// ======== PARTICLES ========
+function initParticles() {
+  const container = document.getElementById('particles');
+  setInterval(() => {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random()*4+2;
+    p.style.width = size+'px'; p.style.height = size+'px';
+    p.style.left = Math.random()*100+'%';
+    p.style.bottom = '0';
+    p.style.backgroundColor = ['#fbbf24','#ff6b00','#00a86b'][Math.floor(Math.random()*3)];
+    p.style.animationDuration = (Math.random()*10+8)+'s';
+    container.appendChild(p);
+    setTimeout(() => p.remove(), 20000);
+  }, 600);
+}
+initParticles();
+
+// ======== NAV ACTIVE LINK ========
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    const sTop = s.offsetTop;
+    if(pageYOffset >= sTop-100) current = s.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if(link.getAttribute('href') === '#'+current) link.classList.add('active');
+  });
+});
+
+// ======== 3D COMPASS (Three.js) ========
+const canvas = document.getElementById('compass-canvas');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, canvas.clientWidth/canvas.clientHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+camera.position.z = 10;
+
+const regions = [
+  {name:'North Bengal', bjp:42, aitc:9, others:1, pos:new THREE.Vector3(3,2,0)},
+  {name:'Junglemahal', bjp:28, aitc:15, others:0, pos:new THREE.Vector3(-3,1,1)},
+  {name:'Kolkata Metro', bjp:30, aitc:45, others:0, pos:new THREE.Vector3(0,-3,-1)},
+  {name:'Gangetic Plains', bjp:65, aitc:46, others:0, pos:new THREE.Vector3(-2,-2,2)}
+];
+const nodes = [];
+regions.forEach(r => {
+  const total = r.bjp+r.aitc+r.others;
+  const bjpPct = r.bjp/total;
+  const color = bjpPct>0.5 ? 0xff6b00 : 0x00a86b;
+  const geo = new THREE.SphereGeometry(0.6, 16, 16);
+  const mat = new THREE.MeshBasicMaterial({color, transparent:true, opacity:0.8});
+  const sphere = new THREE.Mesh(geo, mat);
+  sphere.position.copy(r.pos);
+  sphere.userData = r;
+  scene.add(sphere);
+  nodes.push(sphere);
+  // Add connecting lines to center
+  const lineMat = new THREE.LineBasicMaterial({color:0xfbbf24, transparent:true, opacity:0.3});
+  const lineGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), r.pos]);
+  scene.add(new THREE.Line(lineGeo, lineMat));
+});
+
+let mouseX=0, mouseY=0, isDragging=false;
+canvas.addEventListener('mousedown', () => isDragging=true);
+canvas.addEventListener('mouseup', () => isDragging=false);
+canvas.addEventListener('mousemove', e => {
+  if(!isDragging) return;
+  mouseX = (e.clientX/window.innerWidth)*2-1;
+  mouseY = -(e.clientY/window.innerHeight)*2+1;
+});
+
+const tooltip = document.getElementById('compass-tooltip');
+function animate() {
+  requestAnimationFrame(animate);
+  nodes.forEach(n => n.rotation.y += 0.01);
+  scene.rotation.y = mouseX*0.3;
+  scene.rotation.x = mouseY*0.2;
+  renderer.render(scene, camera);
+}
+animate();
+
+canvas.addEventListener('mousemove', e => {
+  const mouse = new THREE.Vector2((e.offsetX/canvas.clientWidth)*2-1, -(e.offsetY/canvas.clientHeight)*2+1);
+  const raycaster = new THREE.Raycaster();
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(nodes);
+  if(intersects.length>0) {
+    const r = intersects[0].object.userData;
+    tooltip.innerHTML = `<strong>${r.name}</strong><br/>BJP: ${r.bjp} &bull; AITC: ${r.aitc} &bull; Others: ${r.others}`;
+    tooltip.style.left = e.pageX+10+'px';
+    tooltip.style.top = e.pageY+10+'px';
+    tooltip.classList.remove('hidden');
+  } else {
+    tooltip.classList.add('hidden');
+  }
+});
+
+// ======== CHART.JS DOUGHNUT ========
+const ctx = document.getElementById('seatShareChart').getContext('2d');
+new Chart(ctx, {
+  type: 'doughnut',
+  data: {
+    labels: ['BJP','AITC','Others'],
+    datasets: [{
+      data: [165, 115, 14],
+      backgroundColor: ['#ff6b00','#00a86b','#64748b'],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    cutout: '70%',
+    plugins: {
+      legend: {position:'bottom', labels:{color:'#f8fafc', font:{size:12}}}
+    },
+    animation: { animateRotate:true, animateScale:true }
+  }
+});
+
+// ======== INTERSECTION OBSERVER (FADE-IN) ========
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.style.opacity=1; });
+}, {threshold:0.1});
+document.querySelectorAll('section').forEach(s => {
+  s.style.opacity=0; s.style.transition='opacity 0.8s';
+  observer.observe(s);
+});
+</script>
+
+</body>
+</html>
